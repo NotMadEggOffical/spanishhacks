@@ -2,44 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SpanishHacks</title>
-  <link rel="icon" href="https://t1.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;url=https://hackemos.xyz&amp;size=256" type="favicon/png">
+  <link rel="icon" href="https://t1.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;url=https://hackemos.xyz&amp;size=256" type="image/png">
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
+      max-width: 600px;
+      margin: auto;
     }
     button {
-      padding: 10px 20px;
-      margin: 10px;
+      margin: 5px 10px 20px 0;
+      padding: 10px 15px;
       font-size: 16px;
       cursor: pointer;
     }
-    .tool-container {
-      margin-top: 30px;
-      border-top: 2px solid #ccc;
-      padding-top: 20px;
+    .tool {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin-top: 10px;
+      border-radius: 8px;
+      background: #f9f9f9;
     }
     select, input {
-      margin: 10px 5px;
+      margin: 10px 5px 20px 0;
       padding: 10px;
       font-size: 16px;
     }
-    .results, .result {
-      margin-top: 20px;
+    .results, .result, #resultTime {
       font-size: 18px;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
 
   <h1>SpanishHacks</h1>
-
-  <button onclick="toggleTool('conjugator')">Conjugator</button>
-  <button onclick="toggleTool('numberTool')">Number Converter</button>
-
-  <div id="conjugator" class="tool-container" style="display:none;">
+  
+  <button id="btnConjugator">Verb Conjugator</button>
+  <button id="btnNumber">Number to Spanish</button>
+  <button id="btnTime">Time Translator</button>
+  
+  <!-- Verb Conjugator -->
+  <div id="conjugator" class="tool">
     <h2>Spanish Verb Conjugator</h2>
+
     <label for="verb-select">Choose a verb:</label>
     <select id="verb-select">
       <option value="">--Select--</option>
@@ -99,108 +108,219 @@
     <div class="results" id="result"></div>
   </div>
 
-  <div id="numberTool" class="tool-container" style="display:none;">
-    <h2>Enter a Number (0–1000) to See It in Spanish</h2>
-    <input type="number" id="numberInput" min="0" max="1000" placeholder="Enter a number" />
+  <!-- Number to Spanish -->
+  <div id="numberTool" class="tool">
+    <h2>Number to Spanish Words</h2>
+
+    <input type="number" id="numberInput" min="0" max="1000" placeholder="Enter a number (0–1000)" />
     <button onclick="convertToSpanish()">Convert</button>
+
     <div class="result" id="output"></div>
   </div>
 
-  <script>
-    function toggleTool(id) {
-      const el = document.getElementById(id);
-      el.style.display = el.style.display === "none" ? "block" : "none";
+  <!-- Time Translator -->
+  <div id="timeTool" class="tool">
+    <h2>Time to Spanish Translator</h2>
+
+    <label for="timeInput">Enter time (e.g. 3:15):</label>
+    <input type="text" id="timeInput" placeholder="HH:MM" />
+
+    <label for="periodSelect">Select AM or PM:</label>
+    <select id="periodSelect">
+      <option value="AM">AM</option>
+      <option value="PM">PM</option>
+    </select>
+
+    <button onclick="translateTime()">Translate</button>
+
+    <div id="resultTime"></div>
+  </div>
+
+<script>
+  // Toggle display function for each tool
+  const btnConjugator = document.getElementById('btnConjugator');
+  const btnNumber = document.getElementById('btnNumber');
+  const btnTime = document.getElementById('btnTime');
+
+  const conjugator = document.getElementById('conjugator');
+  const numberTool = document.getElementById('numberTool');
+  const timeTool = document.getElementById('timeTool');
+
+  function hideAll() {
+    conjugator.style.display = 'none';
+    numberTool.style.display = 'none';
+    timeTool.style.display = 'none';
+  }
+
+  btnConjugator.onclick = () => {
+    if (conjugator.style.display === 'block') {
+      conjugator.style.display = 'none';
+    } else {
+      hideAll();
+      conjugator.style.display = 'block';
+    }
+  };
+
+  btnNumber.onclick = () => {
+    if (numberTool.style.display === 'block') {
+      numberTool.style.display = 'none';
+    } else {
+      hideAll();
+      numberTool.style.display = 'block';
+    }
+  };
+
+  btnTime.onclick = () => {
+    if (timeTool.style.display === 'block') {
+      timeTool.style.display = 'none';
+    } else {
+      hideAll();
+      timeTool.style.display = 'block';
+    }
+  };
+
+  // Verb conjugator code
+  const verbSelect = document.getElementById('verb-select');
+  const buttonsDiv = document.getElementById('buttons');
+  const resultDiv = document.getElementById('result');
+
+  const irregulars = {
+    ser: { "-o": "soy", "-as": "eres", "-a": "es", "-amos": "somos", "-an": "son" },
+    estar: { "-o": "estoy", "-as": "estás", "-a": "está", "-amos": "estamos", "-an": "están" },
+    ir: { "-o": "voy", "-as": "vas", "-a": "va", "-amos": "vamos", "-an": "van" },
+    saber: { "-o": "sé", "-as": "sabes", "-a": "sabe", "-amos": "sabemos", "-an": "saben" },
+    conocer: { "-o": "conozco", "-as": "conoces", "-a": "conoce", "-amos": "conocemos", "-an": "conocen" },
+    hacer: { "-o": "hago", "-as": "haces", "-a": "hace", "-amos": "hacemos", "-an": "hacen" },
+    ver: { "-o": "veo", "-as": "ves", "-a": "ve", "-amos": "vemos", "-an": "ven" },
+    tener: { "-o": "tengo", "-as": "tienes", "-a": "tiene", "-amos": "tenemos", "-an": "tienen" },
+    salir: { "-o": "salgo", "-as": "sales", "-a": "sale", "-amos": "salimos", "-an": "salen" },
+    venir: { "-o": "vengo", "-as": "vienes", "-a": "viene", "-amos": "venimos", "-an": "vienen" },
+    querer: { "-o": "quiero", "-as": "quieres", "-a": "quiere", "-amos": "queremos", "-an": "quieren" },
+    jugar: { "-o": "juego", "-as": "juegas", "-a": "juega", "-amos": "jugamos", "-an": "juegan" },
+  };
+
+  verbSelect.addEventListener('change', () => {
+    resultDiv.innerHTML = '';
+    buttonsDiv.style.display = verbSelect.value ? 'block' : 'none';
+  });
+
+  function conjugate(ending) {
+    const verb = verbSelect.value.toLowerCase();
+    if (!verb) return;
+
+    // Check for irregular
+    if (irregulars[verb]) {
+      resultDiv.innerHTML = `<strong>${verbSelect.value}</strong> + ${ending} = <strong>${irregulars[verb][ending]}</strong>`;
+      return;
     }
 
-    // Conjugator
-    const verbSelect = document.getElementById('verb-select');
-    const buttonsDiv = document.getElementById('buttons');
-    const resultDiv = document.getElementById('result');
+    const stem = verb.slice(0, -2);
+    const verbEnding = verb.slice(-2);
 
-    const irregulars = {
-      ser: { "-o": "soy", "-as": "eres", "-a": "es", "-amos": "somos", "-an": "son" },
-      estar: { "-o": "estoy", "-as": "estás", "-a": "está", "-amos": "estamos", "-an": "están" },
-      ir: { "-o": "voy", "-as": "vas", "-a": "va", "-amos": "vamos", "-an": "van" },
-      saber: { "-o": "sé", "-as": "sabes", "-a": "sabe", "-amos": "sabemos", "-an": "saben" },
-      conocer: { "-o": "conozco", "-as": "conoces", "-a": "conoce", "-amos": "conocemos", "-an": "conocen" },
-      hacer: { "-o": "hago", "-as": "haces", "-a": "hace", "-amos": "hacemos", "-an": "hacen" },
-      ver: { "-o": "veo", "-as": "ves", "-a": "ve", "-amos": "vemos", "-an": "ven" },
-      tener: { "-o": "tengo", "-as": "tienes", "-a": "tiene", "-amos": "tenemos", "-an": "tienen" },
-      salir: { "-o": "salgo", "-as": "sales", "-a": "sale", "-amos": "salimos", "-an": "salen" },
-      venir: { "-o": "vengo", "-as": "vienes", "-a": "viene", "-amos": "venimos", "-an": "vienen" },
-      querer: { "-o": "quiero", "-as": "quieres", "-a": "quiere", "-amos": "queremos", "-an": "quieren" },
-      jugar: { "-o": "juego", "-as": "juegas", "-a": "juega", "-amos": "jugamos", "-an": "juegan" },
-    };
+    let conjugated = '';
 
-    verbSelect.addEventListener('change', () => {
-      resultDiv.innerHTML = '';
-      buttonsDiv.style.display = verbSelect.value ? 'block' : 'none';
-    });
-
-    function conjugate(ending) {
-      const verb = verbSelect.value.toLowerCase();
-      if (!verb) return;
-
-      if (irregulars[verb]) {
-        resultDiv.innerHTML = `<strong>${verbSelect.value}</strong> + ${ending} = <strong>${irregulars[verb][ending]}</strong>`;
-        return;
-      }
-
-      const stem = verb.slice(0, -2);
-      const verbEnding = verb.slice(-2);
-
-      let conjugated = '';
-
-      if (verbEnding === 'ar') {
-        const endings = { "-o": "o", "-as": "as", "-a": "a", "-amos": "amos", "-an": "an" };
-        conjugated = stem + endings[ending];
-      } else if (verbEnding === 'er') {
-        const endings = { "-o": "o", "-as": "es", "-a": "e", "-amos": "emos", "-an": "en" };
-        conjugated = stem + endings[ending];
-      } else if (verbEnding === 'ir') {
-        const endings = { "-o": "o", "-as": "es", "-a": "e", "-amos": "imos", "-an": "en" };
-        conjugated = stem + endings[ending];
-      } else {
-        conjugated = "(Unsupported verb ending)";
-      }
-
-      resultDiv.innerHTML = `<strong>${verbSelect.value}</strong> + ${ending} = <strong>${conjugated}</strong>`;
+    if (verbEnding === 'ar') {
+      const endings = { "-o": "o", "-as": "as", "-a": "a", "-amos": "amos", "-an": "an" };
+      conjugated = stem + endings[ending];
+    } else if (verbEnding === 'er') {
+      const endings = { "-o": "o", "-as": "es", "-a": "e", "-amos": "emos", "-an": "en" };
+      conjugated = stem + endings[ending];
+    } else if (verbEnding === 'ir') {
+      const endings = { "-o": "o", "-as": "es", "-a": "e", "-amos": "imos", "-an": "en" };
+      conjugated = stem + endings[ending];
+    } else {
+      conjugated = "(Unsupported verb ending)";
     }
 
-    // Number to Spanish
-    function convertToSpanish() {
-      const num = parseInt(document.getElementById("numberInput").value);
-      const output = document.getElementById("output");
+    resultDiv.innerHTML = `<strong>${verbSelect.value}</strong> + ${ending} = <strong>${conjugated}</strong>`;
+  }
 
-      if (isNaN(num) || num < 0 || num > 1000) {
-        output.innerHTML = "❌ Please enter a number between 0 and 1000.";
-        return;
-      }
+  // Number to Spanish code
+  function convertToSpanish() {
+    const num = parseInt(document.getElementById("numberInput").value);
+    const output = document.getElementById("output");
 
-      output.innerHTML = `<strong>${num}</strong> en español es: <strong>${numberToSpanish(num)}</strong>`;
+    if (isNaN(num) || num < 0 || num > 1000) {
+      output.innerHTML = "❌ Please enter a number between 0 and 1000.";
+      return;
     }
 
-    function numberToSpanish(n) {
-      const units = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
-      const teens = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"];
-      const tens = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
-      const hundreds = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
+    output.innerHTML = `<strong>${num}</strong> en español es: <strong>${numberToSpanish(num)}</strong>`;
+  }
 
-      if (n === 100) return "cien";
-      if (n === 1000) return "mil";
-      if (n < 10) return units[n];
-      if (n < 20) return teens[n - 10];
-      if (n < 30) return n === 20 ? "veinte" : "veinti" + units[n - 20];
-      if (n < 100) {
-        const ten = Math.floor(n / 10);
-        const unit = n % 10;
-        return tens[ten] + (unit ? " y " + units[unit] : "");
-      }
+  function numberToSpanish(n) {
+    const units = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+    const teens = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"];
+    const tens = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
+    const hundreds = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
+
+    if (n === 100) return "cien";
+    if (n === 1000) return "mil";
+
+    if (n < 10) return units[n];
+    if (n < 20) return teens[n - 10];
+    if (n < 30) {
+      if (n === 20) return "veinte";
+      return "veinti" + units[n - 20];
+    }
+    if (n < 100) {
+      const ten = Math.floor(n / 10);
+      const unit = n % 10;
+      return tens[ten] + (unit !== 0 ? " y " + units[unit] : "");
+    }
+    if (n < 1000) {
       const hundred = Math.floor(n / 100);
       const rest = n % 100;
-      return hundreds[hundred] + (rest ? " " + numberToSpanish(rest) : "");
+      return hundreds[hundred] + (rest !== 0 ? " " + numberToSpanish(rest) : "");
     }
-  </script>
+  }
 
+  // Time to Spanish Translator code
+  const numbersToSpanish = {
+    0: "cero", 1: "una", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco",
+    6: "seis", 7: "siete", 8: "ocho", 9: "nueve", 10: "diez",
+    11: "once", 12: "doce"
+  };
+
+  function translateTime() {
+    const timeInput = document.getElementById('timeInput').value;
+    const period = document.getElementById('periodSelect').value;
+    const result = document.getElementById('resultTime');
+
+    const timeParts = timeInput.split(':');
+    if (timeParts.length !== 2) {
+      result.textContent = "Please enter time in HH:MM format.";
+      return;
+    }
+
+    let hour = parseInt(timeParts[0]);
+    const minute = parseInt(timeParts[1]);
+
+    if (isNaN(hour) || isNaN(minute) || hour < 1 || hour > 12 || minute < 0 || minute > 59) {
+      result.textContent = "Invalid time.";
+      return;
+    }
+
+    const periodSpanish = period === "AM" ? "de la mañana" : "de la tarde";
+    const hourSpanish = hour === 1 ? "la una" : `las ${numbersToSpanish[hour] || hour}`;
+    const minuteSpanish = minute === 0 
+      ? "en punto"
+      : `y ${minute < 10 ? "0" + minute : minute}`;
+
+    // For minutes, convert to Spanish if possible (0-12), else show number
+    let minuteText = "";
+    if(minute === 0) {
+      minuteText = "en punto";
+    } else if (minute <= 12) {
+      minuteText = "y " + (numbersToSpanish[minute] || minute);
+    } else {
+      // Compose minute text in Spanish (up to 59)
+      minuteText = "y " + numberToSpanish(minute);
+    }
+
+    const translated = `${hourSpanish} ${minuteText} ${periodSpanish}`;
+    result.textContent = translated;
+  }
+</script>
 </body>
 </html>
