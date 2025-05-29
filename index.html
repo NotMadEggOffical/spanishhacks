@@ -1,326 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SpanishHacks</title>
-  <link rel="icon" href="https://t1.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;url=https://hackemos.xyz&amp;size=256" type="image/png">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SpanishHacks</title>
+<style>
+  body, html {
+    margin: 0; padding: 0; height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+    display: flex; flex-direction: column;
+    color: #333;
+  }
+
+  header {
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    position: sticky; top: 0; z-index: 1000;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+
+  /* Branding style */
+  .branding {
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #1c3d5a;
+    letter-spacing: 2px;
+    user-select: none;
+    font-family: 'Segoe UI Black', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* Button container to keep buttons centered */
+  .button-group {
+    display: flex;
+    gap: 12px;
+  }
+
+  button {
+    background: #f9fafb;
+    border: 2px solid transparent;
+    color: #334e68;
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+
+  button:hover {
+    background-color: #627d98;
+    color: #fff;
+    border-color: #627d98;
+    box-shadow: 0 4px 10px rgba(98, 125, 152, 0.4);
+    transform: translateY(-2px);
+  }
+
+  button.active {
+    background-color: #1c3d5a;
+    color: #fff;
+    border-color: #1c3d5a;
+    box-shadow: 0 6px 15px rgba(28, 61, 90, 0.5);
+    transform: translateY(-2px);
+  }
+
+  main {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: none;
+    border-radius: 0 0 12px 12px;
+  }
+  iframe.active {
+    display: block;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 700px) {
+    .branding {
+      font-size: 1.3rem;
     }
     button {
-      margin: 5px 10px 20px 0;
-      padding: 10px 15px;
-      font-size: 16px;
-      cursor: pointer;
+      padding: 8px 14px;
+      font-size: 0.9rem;
     }
-    .tool {
-      display: none;
-      border: 1px solid #ccc;
-      padding: 20px;
-      margin-top: 10px;
-      border-radius: 8px;
-      background: #f9f9f9;
+    header {
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
     }
-    select, input {
-      margin: 10px 5px 20px 0;
-      padding: 10px;
-      font-size: 16px;
+    .button-group {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 100%;
     }
-    .results, .result, #resultTime {
-      font-size: 18px;
-      margin-top: 15px;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-  <h1>SpanishHacks</h1>
-  
-  <button id="btnConjugator">Verb Conjugator</button>
-  <button id="btnNumber">Number to Spanish</button>
-  <button id="btnTime">Time Translator</button>
-  
-  <!-- Verb Conjugator -->
-  <div id="conjugator" class="tool">
-    <h2>Spanish Verb Conjugator</h2>
-
-    <label for="verb-select">Choose a verb:</label>
-    <select id="verb-select">
-      <option value="">--Select--</option>
-      <option>Ser</option>
-      <option>Estar</option>
-      <option>Estudiar</option>
-      <option>Hablar</option>
-      <option>Llevar</option>
-      <option>Necesitar</option>
-      <option>Terminar</option>
-      <option>Ir</option>
-      <option>Saber</option>
-      <option>Conocer</option>
-      <option>Tomar</option>
-      <option>Caminar</option>
-      <option>Hacer</option>
-      <option>Leer</option>
-      <option>Preguntar</option>
-      <option>Ver</option>
-      <option>Comprender</option>
-      <option>Comer</option>
-      <option>Vivir</option>
-      <option>Salir</option>
-      <option>Bailar</option>
-      <option>Beber</option>
-      <option>Comprar</option>
-      <option>Gustar</option>
-      <option>Mirar</option>
-      <option>Nadar</option>
-      <option>Patinar</option>
-      <option>Buscar</option>
-      <option>Tocar</option>
-      <option>Abrir</option>
-      <option>Usar</option>
-      <option>Escuchar</option>
-      <option>Contestar</option>
-      <option>Tener</option>
-      <option>Montar</option>
-      <option>Pasar</option>
-      <option>Llamar</option>
-      <option>Entrar</option>
-      <option>Bajar</option>
-      <option>Descargar</option>
-      <option>Venir</option>
-      <option>Querer</option>
-      <option>Jugar</option>
-    </select>
-
-    <div id="buttons" style="display: none;">
-      <button onclick="conjugate('-o')">-o</button>
-      <button onclick="conjugate('-as')">-as</button>
-      <button onclick="conjugate('-a')">-a</button>
-      <button onclick="conjugate('-amos')">-amos</button>
-      <button onclick="conjugate('-an')">-an</button>
-    </div>
-
-    <div class="results" id="result"></div>
+<header>
+  <div class="branding">SpanishHacks - 🫡 ✍️📝</div>
+  <div class="button-group">
+    <button class="active" data-src="https://notmadeggoffical.github.io/spanishhacks/svc.html">Spanish Verb Conjugator</button>
+    <button data-src="https://notmadeggoffical.github.io/spanishhacks/numero.htm">Number to Spanish</button>
+    <button data-src="https://notmadeggoffical.github.io/spanishhacks/time.html">Time to Spanish</button>
+    <button data-src="https://notmadeggoffical.github.io/spanishhacks/month.htm">Month & Days to Spanish</button>
+    <button data-src="https://notmadeggoffical.github.io/spanishhacks/flashcards.html">Quizlet Flashcards</button>
   </div>
+</header>
 
-  <!-- Number to Spanish -->
-  <div id="numberTool" class="tool">
-    <h2>Number to Spanish Words</h2>
-
-    <input type="number" id="numberInput" min="0" max="1000" placeholder="Enter a number (0–1000)" />
-    <button onclick="convertToSpanish()">Convert</button>
-
-    <div class="result" id="output"></div>
-  </div>
-
-  <!-- Time Translator -->
-  <div id="timeTool" class="tool">
-    <h2>Time to Spanish Translator</h2>
-
-    <label for="timeInput">Enter time (e.g. 3:15):</label>
-    <input type="text" id="timeInput" placeholder="HH:MM" />
-
-    <label for="periodSelect">Select AM or PM:</label>
-    <select id="periodSelect">
-      <option value="AM">AM</option>
-      <option value="PM">PM</option>
-    </select>
-
-    <button onclick="translateTime()">Translate</button>
-
-    <div id="resultTime"></div>
-  </div>
+<main>
+  <iframe src="https://notmadeggoffical.github.io/spanishhacks/svc.html" class="active"></iframe>
+  <iframe src="https://notmadeggoffical.github.io/spanishhacks/numero.htm"></iframe>
+  <iframe src="https://notmadeggoffical.github.io/spanishhacks/time.html"></iframe>
+  <iframe src="https://notmadeggoffical.github.io/spanishhacks/month.htm"></iframe>
+  <iframe src="https://notmadeggoffical.github.io/spanishhacks/flashcards.html"></iframe>
+</main>
 
 <script>
-  // Toggle display function for each tool
-  const btnConjugator = document.getElementById('btnConjugator');
-  const btnNumber = document.getElementById('btnNumber');
-  const btnTime = document.getElementById('btnTime');
+  const buttons = document.querySelectorAll('header button');
+  const iframes = document.querySelectorAll('main iframe');
 
-  const conjugator = document.getElementById('conjugator');
-  const numberTool = document.getElementById('numberTool');
-  const timeTool = document.getElementById('timeTool');
+  buttons.forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      iframes.forEach(f => f.classList.remove('active'));
 
-  function hideAll() {
-    conjugator.style.display = 'none';
-    numberTool.style.display = 'none';
-    timeTool.style.display = 'none';
-  }
-
-  btnConjugator.onclick = () => {
-    if (conjugator.style.display === 'block') {
-      conjugator.style.display = 'none';
-    } else {
-      hideAll();
-      conjugator.style.display = 'block';
-    }
-  };
-
-  btnNumber.onclick = () => {
-    if (numberTool.style.display === 'block') {
-      numberTool.style.display = 'none';
-    } else {
-      hideAll();
-      numberTool.style.display = 'block';
-    }
-  };
-
-  btnTime.onclick = () => {
-    if (timeTool.style.display === 'block') {
-      timeTool.style.display = 'none';
-    } else {
-      hideAll();
-      timeTool.style.display = 'block';
-    }
-  };
-
-  // Verb conjugator code
-  const verbSelect = document.getElementById('verb-select');
-  const buttonsDiv = document.getElementById('buttons');
-  const resultDiv = document.getElementById('result');
-
-  const irregulars = {
-    ser: { "-o": "soy", "-as": "eres", "-a": "es", "-amos": "somos", "-an": "son" },
-    estar: { "-o": "estoy", "-as": "estás", "-a": "está", "-amos": "estamos", "-an": "están" },
-    ir: { "-o": "voy", "-as": "vas", "-a": "va", "-amos": "vamos", "-an": "van" },
-    saber: { "-o": "sé", "-as": "sabes", "-a": "sabe", "-amos": "sabemos", "-an": "saben" },
-    conocer: { "-o": "conozco", "-as": "conoces", "-a": "conoce", "-amos": "conocemos", "-an": "conocen" },
-    hacer: { "-o": "hago", "-as": "haces", "-a": "hace", "-amos": "hacemos", "-an": "hacen" },
-    ver: { "-o": "veo", "-as": "ves", "-a": "ve", "-amos": "vemos", "-an": "ven" },
-    tener: { "-o": "tengo", "-as": "tienes", "-a": "tiene", "-amos": "tenemos", "-an": "tienen" },
-    salir: { "-o": "salgo", "-as": "sales", "-a": "sale", "-amos": "salimos", "-an": "salen" },
-    venir: { "-o": "vengo", "-as": "vienes", "-a": "viene", "-amos": "venimos", "-an": "vienen" },
-    querer: { "-o": "quiero", "-as": "quieres", "-a": "quiere", "-amos": "queremos", "-an": "quieren" },
-    jugar: { "-o": "juego", "-as": "juegas", "-a": "juega", "-amos": "jugamos", "-an": "juegan" },
-  };
-
-  verbSelect.addEventListener('change', () => {
-    resultDiv.innerHTML = '';
-    buttonsDiv.style.display = verbSelect.value ? 'block' : 'none';
+      btn.classList.add('active');
+      iframes[i].classList.add('active');
+    });
   });
-
-  function conjugate(ending) {
-    const verb = verbSelect.value.toLowerCase();
-    if (!verb) return;
-
-    // Check for irregular
-    if (irregulars[verb]) {
-      resultDiv.innerHTML = `<strong>${verbSelect.value}</strong> + ${ending} = <strong>${irregulars[verb][ending]}</strong>`;
-      return;
-    }
-
-    const stem = verb.slice(0, -2);
-    const verbEnding = verb.slice(-2);
-
-    let conjugated = '';
-
-    if (verbEnding === 'ar') {
-      const endings = { "-o": "o", "-as": "as", "-a": "a", "-amos": "amos", "-an": "an" };
-      conjugated = stem + endings[ending];
-    } else if (verbEnding === 'er') {
-      const endings = { "-o": "o", "-as": "es", "-a": "e", "-amos": "emos", "-an": "en" };
-      conjugated = stem + endings[ending];
-    } else if (verbEnding === 'ir') {
-      const endings = { "-o": "o", "-as": "es", "-a": "e", "-amos": "imos", "-an": "en" };
-      conjugated = stem + endings[ending];
-    } else {
-      conjugated = "(Unsupported verb ending)";
-    }
-
-    resultDiv.innerHTML = `<strong>${verbSelect.value}</strong> + ${ending} = <strong>${conjugated}</strong>`;
-  }
-
-  // Number to Spanish code
-  function convertToSpanish() {
-    const num = parseInt(document.getElementById("numberInput").value);
-    const output = document.getElementById("output");
-
-    if (isNaN(num) || num < 0 || num > 1000) {
-      output.innerHTML = "❌ Please enter a number between 0 and 1000.";
-      return;
-    }
-
-    output.innerHTML = `<strong>${num}</strong> en español es: <strong>${numberToSpanish(num)}</strong>`;
-  }
-
-  function numberToSpanish(n) {
-    const units = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
-    const teens = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"];
-    const tens = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
-    const hundreds = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
-
-    if (n === 100) return "cien";
-    if (n === 1000) return "mil";
-
-    if (n < 10) return units[n];
-    if (n < 20) return teens[n - 10];
-    if (n < 30) {
-      if (n === 20) return "veinte";
-      return "veinti" + units[n - 20];
-    }
-    if (n < 100) {
-      const ten = Math.floor(n / 10);
-      const unit = n % 10;
-      return tens[ten] + (unit !== 0 ? " y " + units[unit] : "");
-    }
-    if (n < 1000) {
-      const hundred = Math.floor(n / 100);
-      const rest = n % 100;
-      return hundreds[hundred] + (rest !== 0 ? " " + numberToSpanish(rest) : "");
-    }
-  }
-
-  // Time to Spanish Translator code
-  const numbersToSpanish = {
-    0: "cero", 1: "una", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco",
-    6: "seis", 7: "siete", 8: "ocho", 9: "nueve", 10: "diez",
-    11: "once", 12: "doce"
-  };
-
-  function translateTime() {
-    const timeInput = document.getElementById('timeInput').value;
-    const period = document.getElementById('periodSelect').value;
-    const result = document.getElementById('resultTime');
-
-    const timeParts = timeInput.split(':');
-    if (timeParts.length !== 2) {
-      result.textContent = "Please enter time in HH:MM format.";
-      return;
-    }
-
-    let hour = parseInt(timeParts[0]);
-    const minute = parseInt(timeParts[1]);
-
-    if (isNaN(hour) || isNaN(minute) || hour < 1 || hour > 12 || minute < 0 || minute > 59) {
-      result.textContent = "Invalid time.";
-      return;
-    }
-
-    const periodSpanish = period === "AM" ? "de la mañana" : "de la tarde";
-    const hourSpanish = hour === 1 ? "la una" : `las ${numbersToSpanish[hour] || hour}`;
-    const minuteSpanish = minute === 0 
-      ? "en punto"
-      : `y ${minute < 10 ? "0" + minute : minute}`;
-
-    // For minutes, convert to Spanish if possible (0-12), else show number
-    let minuteText = "";
-    if(minute === 0) {
-      minuteText = "en punto";
-    } else if (minute <= 12) {
-      minuteText = "y " + (numbersToSpanish[minute] || minute);
-    } else {
-      // Compose minute text in Spanish (up to 59)
-      minuteText = "y " + numberToSpanish(minute);
-    }
-
-    const translated = `${hourSpanish} ${minuteText} ${periodSpanish}`;
-    result.textContent = translated;
-  }
 </script>
+
 </body>
 </html>
