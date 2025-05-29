@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>English to Spanish: Month or Day</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input, button {
+      margin: 5px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+    #output {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Translate Month or Day to Spanish</h1>
+  <p>Enter a month or day in English:</p>
+  <input type="text" id="inputWord" placeholder="e.g., January or Monday">
+  <button id="translateButton">Translate</button>
+  <div id="output"></div>
+
+  <script>
+    const months = {
+      january: "enero",
+      february: "febrero",
+      march: "marzo",
+      april: "abril",
+      may: "mayo",
+      june: "junio",
+      july: "julio",
+      august: "agosto",
+      september: "septiembre",
+      october: "octubre",
+      november: "noviembre",
+      december: "diciembre"
+    };
+
+    const days = {
+      monday: "lunes",
+      tuesday: "martes",
+      wednesday: "miércoles",
+      thursday: "jueves",
+      friday: "viernes",
+      saturday: "sábado",
+      sunday: "domingo"
+    };
+
+    function translate() {
+      const input = document.getElementById("inputWord").value.trim().toLowerCase();
+      const output = document.getElementById("output");
+
+      if (months[input]) {
+        output.textContent = `"${input}" in Spanish is "${months[input]}" (month)`;
+      } else if (days[input]) {
+        output.textContent = `"${input}" in Spanish is "${days[input]}" (day)`;
+      } else {
+        output.textContent = `Sorry, "${input}" is not recognized as a valid day or month.`;
+      }
+    }
+
+    // ✅ Attach event listener once DOM is loaded
+    document.getElementById("translateButton").addEventListener("click", translate);
+  </script>
+</body>
+</html>
