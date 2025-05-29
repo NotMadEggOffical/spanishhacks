@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>E</title>
+<style>
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: Arial, sans-serif;
+  }
+  #selector-container {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #fff;
+    z-index: 10;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+  }
+  select {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+  option.best {
+    color: blue;
+    font-weight: bold;
+  }
+  option.best::after {
+    content: " (on the test)";
+  }
+  #embed-frame {
+    position: fixed;
+    top: 50px; /* height of selector container + some margin */
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 50px);
+    border: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="selector-container">
+  <label for="quizlet-select" style="margin-right:10px; font-weight:bold;">Choose which flashcards you want to review:</label>
+  <select id="quizlet-select">
+    <option value="https://quizlet.com/198140809/la-tienda-de-articulos-electronicos-flash-cards/" >1. La tienda de artículos electrónicos vocab</option>
+    <option value="https://quizlet.com/125213012/flashcards?funnelUUID=00a279f7-cd74-4b29-849b-d2b0094af671" class="best">2.  A mí me gusta... (on the test)</option>
+    <option value="https://quizlet.com/250784905/flashcards?funnelUUID=cdca1f2f-2c55-4c98-a10a-5276d8098dd3" >3. Spanish question asking words</option>
+    <option value="https://quizlet.com/68283376/flashcards?funnelUUID=e2b4e621-0f42-47c6-a977-0ce1e4804343" >4. adjetivos con estar</option>
+    <option value="https://quizlet.com/685010928/flashcards?funnelUUID=c33ced7b-50c2-4d31-8fb8-db8dee77cc2f" class="best">5. Puerto Rico: La Isla del Encanto (on the test)</option>
+    <option value="https://quizlet.com/183511947/flashcards?funnelUUID=2708a75f-bc8b-402b-b978-45d290207dc0" >6. La familia</option>
+    <option value="https://quizlet.com/63777710/flashcards?funnelUUID=e34e3b35-9357-4ac6-82da-07f3d314369b" >7. Capítulo 3: En la ciudad</option>
+    <option value="https://quizlet.com/658496558/flashcards?funnelUUID=7a88409b-4c5b-494c-91c5-528f68e91208" class="best">8. La ciudad de México (on the test)</option>
+    <option value="https://quizlet.com/641902053/flashcards?funnelUUID=85fb08ae-28b1-467e-86cc-fc0674e4b82b" class="best">9. Spanish in the USA (on the test)</option>
+  </select>
+</div>
+
+<iframe id="embed-frame" src="https://quizlet.com/198140809/la-tienda-de-articulos-electronicos-flash-cards/" allowfullscreen></iframe>
+
+<script>
+  const select = document.getElementById('quizlet-select');
+  const iframe = document.getElementById('embed-frame');
+
+  select.addEventListener('change', () => {
+    iframe.src = select.value;
+  });
+</script>
+
+</body>
+</html>
