@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Number to Spanish</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    button {
+      margin: 5px 10px 20px 0;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    input {
+      margin: 10px 5px 20px 0;
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+    }
+    .result {
+      font-size: 18px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Number to Spanish Words</h1>
+
+  <input type="number" id="numberInput" min="0" max="1000" placeholder="Enter a number (0–1000)" />
+  <button onclick="convertToSpanish()">Convert</button>
+
+  <div class="result" id="output"></div>
+
+<script>
+  function convertToSpanish() {
+    const num = parseInt(document.getElementById("numberInput").value);
+    const output = document.getElementById("output");
+
+    if (isNaN(num) || num < 0 || num > 1000) {
+      output.innerHTML = "❌ Please enter a number between 0 and 1000.";
+      return;
+    }
+
+    output.innerHTML = `<strong>${num}</strong> en español es: <strong>${numberToSpanish(num)}</strong>`;
+  }
+
+  function numberToSpanish(n) {
+    const units = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+    const teens = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"];
+    const tens = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
+    const hundreds = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
+
+    if (n === 100) return "cien";
+    if (n === 1000) return "mil";
+
+    if (n < 10) return units[n];
+    if (n < 20) return teens[n - 10];
+    if (n < 30) {
+      if (n === 20) return "veinte";
+      return "veinti" + units[n - 20];
+    }
+    if (n < 100) {
+      const ten = Math.floor(n / 10);
+      const unit = n % 10;
+      return tens[ten] + (unit !== 0 ? " y " + units[unit] : "");
+    }
+    if (n < 1000) {
+      const hundred = Math.floor(n / 100);
+      const rest = n % 100;
+      return hundreds[hundred] + (rest !== 0 ? " " + numberToSpanish(rest) : "");
+    }
+  }
+</script>
+
+</body>
+</html>
