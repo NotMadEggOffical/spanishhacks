@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Time to Spanish Translator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    input, select {
+      margin: 10px 5px 20px 0;
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+    }
+    button {
+      margin: 5px 10px 20px 0;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #resultTime {
+      font-size: 18px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Time to Spanish Translator</h1>
+
+  <label for="timeInput">Enter time (e.g. 3:15):</label><br/>
+  <input type="text" id="timeInput" placeholder="HH:MM" />
+
+  <label for="periodSelect">Select AM or PM:</label><br/>
+  <select id="periodSelect">
+    <option value="AM">AM</option>
+    <option value="PM">PM</option>
+  </select>
+
+  <button onclick="translateTime()">Translate</button>
+
+  <div id="resultTime"></div>
+
+<script>
+  const numbersToSpanish = {
+    0: "cero", 1: "una", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco",
+    6: "seis", 7: "siete", 8: "ocho", 9: "nueve", 10: "diez",
+    11: "once", 12: "doce"
+  };
+
+  function numberToSpanish(n) {
+    const units = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+    const teens = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"];
+    const tens = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
+    const hundreds = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
+
+    if (n === 100) return "cien";
+    if (n === 1000) return "mil";
+
+    if (n < 10) return units[n];
+    if (n < 20) return teens[n - 10];
+    if (n < 30) {
+      if (n === 20) return "veinte";
+      return "veinti" + units[n - 20];
+    }
+    if (n < 100) {
+      const ten = Math.floor(n / 10);
+      const unit = n % 10;
+      return tens[ten] + (unit !== 0 ? " y " + units[unit] : "");
+    }
+    if (n < 1000) {
+      const hundred = Math.floor(n / 100);
+      const rest = n % 100;
+      return hundreds[hundred] + (rest !== 0 ? " " + numberToSpanish(rest) : "");
+    }
+  }
+
+  function translateTime() {
+    const timeInput = document.getElementById('timeInput').value;
+    const period = document.getElementById('periodSelect').value;
+    const result = document.getElementById('resultTime');
+
+    const timeParts = timeInput.split(':');
+    if (timeParts.length !== 2) {
+      result.textContent = "Please enter time in HH:MM format.";
+      return;
+    }
+
+    let hour = parseInt(timeParts[0]);
+    const minute = parseInt(timeParts[1]);
+
+    if (isNaN(hour) || isNaN(minute) || hour < 1 || hour > 12 || minute < 0 || minute > 59) {
+      result.textContent = "Invalid time.";
+      return;
+    }
+
+    const periodSpanish = period === "AM" ? "de la mañana" : "de la tarde";
+    const hourSpanish = hour === 1 ? "la una" : `las ${numbersToSpanish[hour] || hour}`;
+    let minuteText = "";
+
+    if(minute === 0) {
+      minuteText = "en punto";
+    } else if (minute <= 12) {
+      minuteText = "y " + (numbersToSpanish[minute] || minute);
+    } else {
+      minuteText = "y " + numberToSpanish(minute);
+    }
+
+    const translated = `${hourSpanish} ${minuteText} ${periodSpanish}`;
+    result.textContent = translated;
+  }
+</script>
+
+</body>
+</html>
