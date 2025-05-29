@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spanish Verb Conjugator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    button {
+      margin: 5px 10px 20px 0;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    select, input {
+      margin: 10px 5px 20px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .results {
+      font-size: 18px;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Spanish Verb Conjugator</h1>
+
+  <label for="verb-select">Choose a verb:</label>
+  <select id="verb-select">
+    <option value="">--Select--</option>
+    <option>Ser</option>
+    <option>Estar</option>
+    <option>Estudiar</option>
+    <option>Hablar</option>
+    <option>Llevar</option>
+    <option>Necesitar</option>
+    <option>Terminar</option>
+    <option>Ir</option>
+    <option>Saber</option>
+    <option>Conocer</option>
+    <option>Tomar</option>
+    <option>Caminar</option>
+    <option>Hacer</option>
+    <option>Leer</option>
+    <option>Preguntar</option>
+    <option>Ver</option>
+    <option>Comprender</option>
+    <option>Comer</option>
+    <option>Vivir</option>
+    <option>Salir</option>
+    <option>Bailar</option>
+    <option>Beber</option>
+    <option>Comprar</option>
+    <option>Gustar</option>
+    <option>Mirar</option>
+    <option>Nadar</option>
+    <option>Patinar</option>
+    <option>Buscar</option>
+    <option>Tocar</option>
+    <option>Abrir</option>
+    <option>Usar</option>
+    <option>Escuchar</option>
+    <option>Contestar</option>
+    <option>Tener</option>
+    <option>Montar</option>
+    <option>Pasar</option>
+    <option>Llamar</option>
+    <option>Entrar</option>
+    <option>Bajar</option>
+    <option>Descargar</option>
+    <option>Venir</option>
+    <option>Querer</option>
+    <option>Jugar</option>
+  </select>
+
+  <div id="buttons" style="display: none;">
+    <button onclick="conjugate('-o')">-o</button>
+    <button onclick="conjugate('-as')">-as</button>
+    <button onclick="conjugate('-a')">-a</button>
+    <button onclick="conjugate('-amos')">-amos</button>
+    <button onclick="conjugate('-an')">-an</button>
+    <button onclick="conjugate('-áis')">-áis</button> <!-- Vosotros -->
+  </div>
+
+  <div class="results" id="result"></div>
+
+  <h3>Check if a conjugation is irregular</h3>
+  <input type="text" id="checkConjugationInput" placeholder="Write a conjugated verb form" />
+  <button onclick="checkIrregular()">Check</button>
+  <div id="checkResult" style="margin-top:10px; font-weight: bold;"></div>
+
+<script>
+  const verbSelect = document.getElementById('verb-select');
+  const buttonsDiv = document.getElementById('buttons');
+  const resultDiv = document.getElementById('result');
+  const checkResultDiv = document.getElementById('checkResult');
+
+  // Irregular conjugations including -áis forms
+  const irregulars = {
+    ser: { "-o": "soy", "-as": "eres", "-a": "es", "-amos": "somos", "-an": "son", "-áis": "sois" },
+    estar: { "-o": "estoy", "-as": "estás", "-a": "está", "-amos": "estamos", "-an": "están", "-áis": "estáis" },
+    ir: { "-o": "voy", "-as": "vas", "-a": "va", "-amos": "vamos", "-an": "van", "-áis": "vais" },
+    saber: { "-o": "sé", "-as": "sabes", "-a": "sabe", "-amos": "sabemos", "-an": "saben", "-áis": "sabéis" },
+    conocer: { "-o": "conozco", "-as": "conoces", "-a": "conoce", "-amos": "conocemos", "-an": "conocen", "-áis": "conocéis" },
+    hacer: { "-o": "hago", "-as": "haces", "-a": "hace", "-amos": "hacemos", "-an": "hacen", "-áis": "hacéis" },
+    ver: { "-o": "veo", "-as": "ves", "-a": "ve", "-amos": "vemos", "-an": "ven", "-áis": "veis" },
+    tener: { "-o": "tengo", "-as": "tienes", "-a": "tiene", "-amos": "tenemos", "-an": "tienen", "-áis": "tenéis" },
+    salir: { "-o": "salgo", "-as": "sales", "-a": "sale", "-amos": "salimos", "-an": "salen", "-áis": "salís" },
+    venir: { "-o": "vengo", "-as": "vienes", "-a": "viene", "-amos": "venimos", "-an": "vienen", "-áis": "venís" },
+    querer: { "-o": "quiero", "-as": "quieres", "-a": "quiere", "-amos": "queremos", "-an": "quieren", "-áis": "queréis" },
+    jugar: { "-o": "juego", "-as": "juegas", "-a": "juega", "-amos": "jugamos", "-an": "juegan", "-áis": "jugáis" },
+  };
+
+  verbSelect.addEventListener('change', () => {
+    resultDiv.innerHTML = '';
+    checkResultDiv.innerHTML = '';
+    buttonsDiv.style.display = verbSelect.value ? 'block' : 'none';
+  });
+
+  function conjugate(ending) {
+    const verb = verbSelect.value.toLowerCase();
+    if (!verb) return;
+
+    // If irregular, show irregular conjugation
+    if (irregulars[verb] && irregulars[verb][ending]) {
+      resultDiv.innerHTML = `<strong>${verbSelect.value}</strong> + ${ending} = <strong>${irregulars[verb][ending]}</strong>`;
+      return;
+    }
+
+    const stem = verb.slice(0, -2);
+    const verbEnding = verb.slice(-2);
+
+    let conjugated = '';
+
+    if (verbEnding === 'ar') {
+      const endings = { "-o": "o", "-as": "as", "-a": "a", "-amos": "amos", "-an": "an", "-áis": "áis" };
+      conjugated = stem + endings[ending];
+    } else if (verbEnding === 'er') {
+      const endings = { "-o": "o", "-as": "es", "-a": "e", "-amos": "emos", "-an": "en", "-áis": "éis" };
+      conjugated = stem + endings[ending];
+    } else if (verbEnding === 'ir') {
+      const endings = { "-o": "o", "-as": "es", "-a": "e", "-amos": "imos", "-an": "en", "-áis": "ís" };
+      conjugated = stem + endings[ending];
+    } else {
+      conjugated = verb; // fallback if unknown
+    }
+
+    resultDiv.innerHTML = `<strong>${verbSelect.value}</strong> + ${ending} = <strong>${conjugated}</strong>`;
+  }
+
+  function checkIrregular() {
+    const input = document.getElementById('checkConjugationInput').value.trim().toLowerCase();
+    if (!input) {
+      checkResultDiv.textContent = 'Please enter a conjugated verb form.';
+      return;
+    }
+
+    let found = false;
+    for (const verb in irregulars) {
+      for (const ending in irregulars[verb]) {
+        if (irregulars[verb][ending] === input) {
+          checkResultDiv.innerHTML = `"${input}" is an <strong>irregular</strong> conjugation of "<em>${verb}</em>".`;
+          found = true;
+          break;
+        }
+      }
+      if (found) break;
+    }
+
+    if (!found) {
+      checkResultDiv.innerHTML = `"${input}" is <strong>not</strong> an irregular conjugation (or not in the list).`;
+    }
+  }
+</script>
+
+</body>
+</html>
